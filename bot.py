@@ -3,8 +3,8 @@ import logging
 from telegram import Update
 from telegram.ext import Application, CommandHandler, MessageHandler, filters, ContextTypes
 
-# বটের টোকেন (Render-এ এনভায়রনমেন্ট ভেরিয়েবল হিসেবে সেট করবেন)
-TOKEN = os.getenv('BOT_TOKEN', '7774816424:AAG4o-aPDsQbDBf5-W7MNIwIbF4zEwcOUKA')
+# Render-এর এনভায়রনমেন্ট ভেরিয়েবল থেকে টোকেন নিন
+TOKEN = os.getenv('BOT_TOKEN')
 
 # লগিং সেটআপ
 logging.basicConfig(
@@ -51,14 +51,20 @@ def main():
     # টেক্সট মেসেজের জন্য হ্যান্ডলার (ছবি, অডিও ইত্যাদি বাদ)
     application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, echo))
 
-    # বট শুরু করা (Render-এ এটি কাজ করবে)
-    port = int(os.environ.get('PORT', 8443))
-    application.run_webhook(
-        listen="0.0.0.0",
-        port=port,
-        url_path=TOKEN,
-        webhook_url=f"https://your-render-app-name.onrender.com/{TOKEN}"
-    )
+    # Webhook সেটআপ (Render-এর জন্য)
+    webhook_url = os.getenv('RENDER_EXTERNAL_URL', '') + '/' + TOKEN
+    if webhook_url.startswith('https://'):
+        # Render-এ: Webhook ব্যবহার করুন
+        port = int(os.environ.get('PORT', 8443))
+        application.run_webhook(
+            listen="0.0.0.0",
+            port=port,
+            url_path=TOKEN,
+            webhook_url=webhook_url
+        )
+    else:
+        # লোকাল টেস্টিং: Polling ব্যবহার করুন
+        application.run_polling()
 
 if __name__ == '__main__':
     main()
