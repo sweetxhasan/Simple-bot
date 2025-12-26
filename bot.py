@@ -8,7 +8,7 @@ app = Flask(__name__)
 
 # Configuration
 BOT_TOKEN = "7774816424:AAG4o-aPDsQbDBf5-W7MNIwIbF4zEwcOUKA"
-WEBHOOK_URL = "https://your-app-name.vercel.app/webhook"  # Change this
+WEBHOOK_URL = "https://simple-bot-sooty.vercel.app/webhook"  # Change this
 ADMIN_CHAT_ID = None  # Set your chat ID for admin features
 
 # Custom Keyboard
